@@ -13,11 +13,15 @@ import { selectAppLoading } from "./store/appState/selectors";
 import { getUserWithStoredToken } from "./store/user/actions";
 import { Jumbotron } from "react-bootstrap";
 
-const Home = () => (
-  <Jumbotron>
-    <h1>Home</h1>
-  </Jumbotron>
-);
+import Home from "./components/HomeSpaces/HomeSpaces";
+import MyStories from "./pages/MyStories/MyStories";
+import UserMySpace from "./pages/UserMySpace";
+
+// const Home = () => (
+//   <Jumbotron>
+//     <h1>Home</h1>
+//   </Jumbotron>
+// );
 const Other = () => (
   <Jumbotron>
     <h1>Other</h1>
@@ -33,15 +37,17 @@ function App() {
   }, [dispatch]);
 
   return (
-    <div className='App'>
+    <div className="App">
       <Navigation />
       <MessageBox />
       {isLoading ? <Loading /> : null}
       <Routes>
-        <Route exact path='/' element={<Home />} />
-        <Route path='/other' element={<Other />} />
-        <Route path='/signup' element={<SignUp />} />
-        <Route path='/login' element={<Login />} />
+        <Route path="/space/:id" element={<MyStories />} />
+        <Route path="/other" element={<Other />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/userpersonalspace" element={<UserMySpace />} />
+        <Route exact path="/" element={<Home />} />
       </Routes>
     </div>
   );

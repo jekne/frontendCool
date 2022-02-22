@@ -7,9 +7,13 @@ import { selectToken } from "../../store/user/selectors";
 import NavbarItem from "./NavbarItem";
 import LoggedIn from "./LoggedIn";
 import LoggedOut from "./LoggedOut";
+import { selectUserSpace } from "../../store/space/selector";
 
 export default function Navigation() {
   const token = useSelector(selectToken);
+
+  const spaceWithStories = useSelector(selectUserSpace);
+  // console.log("this is my selectUserSpace", spaceWithStories);
 
   const loginLogoutControls = token ? <LoggedIn /> : <LoggedOut />;
 
@@ -23,7 +27,13 @@ export default function Navigation() {
         <Nav style={{ width: "100%" }} fill>
           <NavbarItem path="/" linkText="Home" />
           <NavbarItem path="/other" linkText="Other" />
+          {!spaceWithStories ? (
+            ""
+          ) : (
+            <NavbarItem path="/userpersonalspace" linkText="My Space" />
+          )}
           {loginLogoutControls}
+          {/* here we place in the nav bar a new space */}
         </Nav>
       </Navbar.Collapse>
     </Navbar>

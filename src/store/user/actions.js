@@ -23,6 +23,7 @@ const tokenStillValid = (userWithoutToken) => ({
   type: TOKEN_STILL_VALID,
   payload: userWithoutToken,
 });
+//
 
 export const logOut = () => ({ type: LOG_OUT });
 
@@ -109,3 +110,111 @@ export const getUserWithStoredToken = () => {
     }
   };
 };
+
+export function storyDeleteById(id) {
+  return {
+    type: "USER/deleteById",
+    payload: id,
+  };
+}
+
+//TO DELETE THE STORYS
+export function deleteStoryByID(id) {
+  return async function thunk(dispatch, getState) {
+    try {
+      // dispatch();
+      const response = await axios.delete(`${apiUrl}/stories/${id}`);
+      console.log("response from thunk", response.data);
+      console.log("Am I getting here?", response);
+
+      // i went more deep and give the getAllSpaces, to have just an array otherwise could use just data
+      dispatch(storyDeleteById(id));
+    } catch (e) {}
+  };
+}
+
+export function newStory(name, content, imageUrl) {
+  return {
+    type: "USERS/newStory",
+    payload: name,
+    content,
+    imageUrl,
+  };
+}
+
+export function createNewStory({ name, content, imageUrl, token }) {
+  return async function thunk(dispatch, getState) {
+    try {
+      const { user } = getState();
+      const spaceId = user.space.id;
+      console.log(
+        `THIS IS MY USER GETSTATE ${user}, and my spaceId from thiunk ${spaceId}`
+      );
+      const response = await axios.post(
+        `${apiUrl}/stories/${spaceId}`,
+        {
+          name,
+          content,
+          imageUrl,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      console.log("My token", token);
+      console.log("response from thunk", response);
+      //   console.log("Am I getting here?", response);
+
+      // HERE WE ARE DISPATCHING THE MESSAGE WHO WILL RENDER ON THE TOP OF THE PAGE
+      dispatch(
+        showMessageWithTimeout("success", false, "Story posted on your space!")
+      );
+      // i went more deep and give the getAllSpaces, to have just an array otherwise could use just data
+      dispatch(newStory(response.data));
+    } catch (e) {}
+  };
+}
+
+export function spaceToUpdate(update) {
+  return {
+    type: "SPACES/spaceToUpdate",
+    payload: update,
+  };
+}
+
+export function SpacesWillBeUpdate({
+  title,
+  description,
+  backgroundColor,
+  color,
+  token,
+}) {
+  return async function thunk(dispatch, getState) {
+    try {
+      const { user } = getState();
+      const spaceId = user.space.id;
+      console.log(
+        `THIS IS MY USER GETSTATE ${user}, and my spaceId from thunk ${spaceId}`
+      );
+
+      const response = await axios.put(
+        `${apiUrl}/spaces/${spaceId}`,
+        {
+          title,
+          description,
+          backgroundColor,
+          color,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      console.log("response from thunk", response.data);
+      console.log("Am I getting here?", response);
+      console.log("My token", token);
+
+      // i went more deep and give the getAllSpaces, to have just an array otherwise could use just data
+      dispatch(spaceToUpdate(response.data));
+    } catch (e) {}
+  };
+}
